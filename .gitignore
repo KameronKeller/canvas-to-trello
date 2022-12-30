@@ -1,0 +1,5 @@
+# Ignore the config file to prevent sharing of API keys
+config.py
+
+# Ignore the Python virutal environment
+env/
