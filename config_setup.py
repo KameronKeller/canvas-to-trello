@@ -1,4 +1,5 @@
 import configparser
+import webbrowser
 from simple_term_menu import TerminalMenu
 from commandline_printer import CommandLinePrinter as printer
 
