@@ -14,8 +14,8 @@ class ConfigManager:
 		self.config_parser[name] = {}
 		self.write()
 
-	def update_config(section, attribute, value):
-		config_parser[section][attribute] = value
+	def update_config(self, section, attribute, value):
+		self.config_parser[section][attribute] = value
 		self.write()
 
 
