@@ -2,13 +2,11 @@ from commandline_printer import CommandLinePrinter as printer
 
 class CanvasManager:
 
-	def __init__(config_manager):
+	def __init__(self, config_manager):
 		self.config_manager = config_manager
 
-	def interactive_setup():
+	def interactive_setup(self):
 		printer.print_divider("Canvas Setup")
 		canvas_api_url = input("Paste your Canvas URL (e.g. https://canvas.oregonstate.edu/): ")
-		config_manager.update_config('canvas', 'url', canvas_api_url)
-		# config_manager['canvas'] = {'url': canvas_api_url,
-		# 					'api_key': ""}
-		# config_manager.write()
+		self.config_manager.update_config('canvas', 'url', canvas_api_url)
+		self.config_manager.update_config('canvas', 'api_key', "")
