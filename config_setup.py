@@ -18,3 +18,6 @@ trello_api_key = input("Paste the provided Trello API key here: ")
 trello_api_token = input("Generate a token and paste it here: ")
 config['trello'] = {'api_key': trello_api_key,
                     'api_token': trello_api_token}
+
+with open('config.ini', 'w') as configfile:
+  config.write(configfile)
