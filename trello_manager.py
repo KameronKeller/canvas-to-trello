@@ -19,8 +19,8 @@ class TrelloManager:
 		self.config_manager.update_config('trello', 'api_key', trello_api_key)
 		self.config_manager.update_config('trello', 'api_token', trello_api_token)
 		self.trello_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
-		self.select_board()
-
+		selected_board = self.select_board()
+		self.select_list(selected_board)
 
 	def request_api_info(self):
 		input("Press enter to get your Trello API Key.")
@@ -42,19 +42,42 @@ class TrelloManager:
 		print("Select the Trello board you would like to copy Canvas assignments to.")
 		menu_entry_index = terminal_menu.show()
 		selected_board = board_names[menu_entry_index]
-		self.store_board_id(selected_board)
+		selected_board = self.store_board_id(selected_board)
+		return selected_board
 
 	def store_board_id(self, name):
 		board_map = self.create_board_map()
-		board_id = board_map[name].id
-		self.config_manager.update_config('trello_board', 'id', board_id)
+		selected_board = board_map[name]
+		board_id = selected_board.id
+		self.config_manager.update_config('trello', 'board_id', board_id)
+		return selected_board
 
 	def create_board_map(self, status='open'):
 		all_boards = self.trello_client.list_boards('open')
 		board_map = {board.name: board for board in all_boards}
 		return board_map
 
-	# def create_list_map(self, board):
-	# 	list_map = {list.name: list for list in board.list_lists()}
-	# 	return list_map
+	def select_list(self, board):
+		list_names = self.get_list_names(board)
+		terminal_menu = TerminalMenu(list_names)
+		print("Select the board list you would like assignments to be added to.")
+		menu_entry_index = terminal_menu.show()
+		selected_list = list_names[menu_entry_index]
+		self.store_list_id(board, selected_list)
+
+	def get_list_names(self, board):
+		board_lists = board.all_lists()
+		list_names = ['Create New']
+		for board_list in board_lists:
+			list_names.append(board_list.name)
+		return list_names
+
+	def create_list_map(self, board):
+		list_map = {list.name: list for list in board.list_lists()}
+		return list_map
+
+	def store_list_id(self, board, name):
+		list_map = self.create_list_map(board)
+		selected_list = list_map[name]
+		self.config_manager.update_config('trello', 'list_id', selected_list.id)
 
