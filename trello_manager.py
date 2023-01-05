@@ -84,3 +84,17 @@ class TrelloManager:
 		selected_list = list_map[name]
 		self.config_manager.update_config('trello', 'list_id', selected_list.id)
 
+	def get_selected_board(self):
+		self.config_manager.load_config()
+		board_id = self.config_manager.get_configuration('trello', 'board_id')
+		return self.trello_client.get_board(board_id)
+
+	def get_board_label_names(self):
+		board = self.get_selected_board()
+		labels = board.get_labels()
+		label_names = set()
+		for label in labels:
+			label_names.add(label.name)
+		return label_names
+
+
