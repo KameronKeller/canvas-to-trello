@@ -50,3 +50,13 @@ class CanvasManager:
 		else:
 			course_number = False
 		return course_number
+
+	def get_term(self, name):
+		# Sample return: "F2022" AKA 'Fall 2022'
+		term_pattern = re.compile(r"\w{1}\d{4}")
+		term = term_pattern.search(name)
+		if term:
+			term = term.group(0)
+		else:
+			term = False
+		return term
