@@ -6,6 +6,7 @@ class CanvasManager:
 
 	def __init__(self, config_manager):
 		self.config_manager = config_manager
+		self.time_format = '%Y-%m-%dT%H:%M:%SZ'
 		try:
 			self.config_manager.load_config()
 			canvas_api_url = self.config_manager.get_configuration('canvas', 'url')
@@ -23,7 +24,7 @@ class CanvasManager:
 		self.canvas_client = Canvas(canvas_api_url, None)
 
 	def create_course_map(self):
-		user = canvas_client.get_current_user()
+		user = self.canvas_client.get_current_user()
 		courses = user.get_courses()
 		course_map = {}
 		for course in courses:
