@@ -8,7 +8,6 @@ class CanvasManager:
 		self.config_manager = config_manager
 		self.time_format = '%Y-%m-%dT%H:%M:%SZ'
 		try:
-			self.config_manager.load_config()
 			canvas_api_url = self.config_manager.get_configuration('canvas', 'url')
 			canvas_api_key = self.config_manager.get_configuration('canvas', 'api_key')
 			self.canvas_client = Canvas(canvas_api_url, canvas_api_key)

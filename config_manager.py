@@ -22,6 +22,7 @@ class ConfigManager:
 		self.config_parser.read(self.config_file)
 
 	def get_configuration(self, section, attribute):
+		self.load_config()
 		return self.config_parser[section][attribute]
 
 
