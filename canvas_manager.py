@@ -1,3 +1,4 @@
+import re
 from commandline_printer import CommandLinePrinter as printer
 from canvasapi import Canvas
 
@@ -30,11 +31,22 @@ class CanvasManager:
 				continue
 
 			# Get course code and section number
-			course_number = get_course_number(name)
+			course_number = self.get_course_number(name)
 
-			term = get_term(name)
+			term = self.get_term(name)
 
 			# Both a course number and term number are required
 			if course_number and term:
 				course_map[course_number] = {"course" : course, "term" : term}
 		return course_map
+
+	def get_course_number(self, name):
+		# Returns the course number with the section number
+		# Sample return = "CS_161_501"
+		course_number_pattern = re.compile(r"\w{2}_\d{3}_\d{3}")
+		course_number = course_number_pattern.search(name)
+		if course_number:
+			course_number = course_number.group(0)
+		else:
+			course_number = False
+		return course_number
