@@ -7,7 +7,14 @@ class TrelloManager:
 
 	def __init__(self, config_manager):
 		self.config_manager = config_manager
-		self.trello_client = TrelloClient(None)
+		try:
+			self.config_manager.load_config()
+			trello_api_key = self.config_manager.get_configuration('trello', 'api_key')
+			trello_api_token = self.config_manager.get_configuration('trello', 'api_token')
+			self.canvas_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
+		except KeyError:
+			print("Key not found in configuration. Was setup completed?")
+			self.trello_client = TrelloClient(None)
 
 	def interactive_setup(self):
 		printer.print_divider("Trello Setup")
