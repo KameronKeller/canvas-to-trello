@@ -11,7 +11,7 @@ class TrelloManager:
 			self.config_manager.load_config()
 			trello_api_key = self.config_manager.get_configuration('trello', 'api_key')
 			trello_api_token = self.config_manager.get_configuration('trello', 'api_token')
-			self.canvas_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
+			self.trello_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
 		except KeyError:
 			print("Key not found in configuration. Was setup completed?")
 			self.trello_client = TrelloClient(None)
