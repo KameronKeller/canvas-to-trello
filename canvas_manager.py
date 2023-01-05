@@ -6,7 +6,14 @@ class CanvasManager:
 
 	def __init__(self, config_manager):
 		self.config_manager = config_manager
-		self.canvas_client = Canvas(None, None)
+		try:
+			self.config_manager.load_config()
+			canvas_api_url = self.config_manager.get_configuration('canvas', 'url')
+			canvas_api_key = self.config_manager.get_configuration('canvas', 'api_key')
+			self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
+		except KeyError:
+			print("Key not found in configuration. Was setup completed?")
+			self.canvas_client = Canvas(None, None)
 
 	def interactive_setup(self):
 		printer.print_divider("Canvas Setup")
@@ -35,9 +42,11 @@ class CanvasManager:
 
 			term = self.get_term(name)
 
+			start_at = course.start_at
+
 			# Both a course number and term number are required
 			if course_number and term:
-				course_map[course_number] = {"course" : course, "term" : term}
+				course_map[course_number] = {"course" : course, "term" : term, "start_at" : start_at}
 		return course_map
 
 	def get_course_number(self, name):
