@@ -97,4 +97,13 @@ class TrelloManager:
 			label_names.add(label.name)
 		return label_names
 
+	def add_label(self, name):
+		board = self.get_selected_board()
+		board.add_label(name, 'yellow')
+
+	def get_selected_list(self):
+		board = self.get_selected_board()
+		list_id = self.config_manager.get_configuration('trello', 'list_id')
+		return board.get_list(list_id)
+
 
