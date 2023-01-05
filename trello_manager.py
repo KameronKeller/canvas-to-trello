@@ -7,20 +7,21 @@ class TrelloManager:
 
 	def __init__(self, config_manager):
 		self.config_manager = config_manager
-		try:
-			self.config_manager.load_config()
+		if self.config_manager.get_configuration('trello', 'setup_complete'):
 			trello_api_key = self.config_manager.get_configuration('trello', 'api_key')
 			trello_api_token = self.config_manager.get_configuration('trello', 'api_token')
 			self.trello_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
-		except KeyError:
-			print("Key not found in configuration. Was setup completed?")
-			self.trello_client = TrelloClient(None)
+			self.selected_board = self.get_selected_board()
+			self.selected_list = self.get_selected_list()
+		else:
+			raise Exception("Setup is not complete. Run setup before continuing.")
 
 	def interactive_setup(self):
 		printer.print_divider("Trello Setup")
 		trello_api_key, trello_api_token = self.request_api_info()
 		self.config_manager.update_config('trello', 'api_key', trello_api_key)
 		self.config_manager.update_config('trello', 'api_token', trello_api_token)
+		self.config_manager.update_config('trello', 'setup_complete', True)
 		self.trello_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
 		selected_board = self.select_board()
 		self.select_list(selected_board)
@@ -85,7 +86,6 @@ class TrelloManager:
 		self.config_manager.update_config('trello', 'list_id', selected_list.id)
 
 	def get_selected_board(self):
-		self.config_manager.load_config()
 		board_id = self.config_manager.get_configuration('trello', 'board_id')
 		return self.trello_client.get_board(board_id)
 
@@ -102,7 +102,7 @@ class TrelloManager:
 		board.add_label(name, 'yellow')
 
 	def get_selected_list(self):
-		board = self.get_selected_board()
+		board = self.selected_board
 		list_id = self.config_manager.get_configuration('trello', 'list_id')
 		return board.get_list(list_id)
 
