@@ -20,7 +20,7 @@ class DatabaseManager:
 
 	def update_database(self):
 		# current_year = datetime.date.today().year
-		
+
 		# for testing
 		current_year = 2022
 
@@ -33,8 +33,7 @@ class DatabaseManager:
 				start_at = course['start_at']
 				if start_at is not None:
 					start_at = datetime.datetime.strptime(start_at, self.canvas_manager.time_format)
-				# if start_at is not None and start_at.year == current_year:
-				if course['term'] == "F2022":
+				if start_at is not None and start_at.year == current_year:
 					assignments = course['course'].get_assignments()
 					quizzes = course['course'].get_quizzes()
 					
