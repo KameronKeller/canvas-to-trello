@@ -2,7 +2,6 @@ from config_manager import ConfigManager
 from canvas_manager import CanvasManager
 from trello_manager import TrelloManager
 
-CONFIG_FILE = 'config.ini'
 CONFIG_SECTIONS = ['canvas', 'trello']
 
 config_manager = ConfigManager(CONFIG_FILE)
