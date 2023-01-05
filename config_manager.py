@@ -18,4 +18,7 @@ class ConfigManager:
 		self.config_parser[section][attribute] = value
 		self.write()
 
+	def load_config(self):
+		self.config_parser.read(config_file)
+
 
