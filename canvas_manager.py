@@ -7,20 +7,19 @@ class CanvasManager:
 	def __init__(self, config_manager):
 		self.config_manager = config_manager
 		self.time_format = '%Y-%m-%dT%H:%M:%SZ'
-		try:
+		if self.config_manager.get_boolean('canvas', 'setup_complete'):
 			canvas_api_url = self.config_manager.get_configuration('canvas', 'url')
 			canvas_api_key = self.config_manager.get_configuration('canvas', 'api_key')
 			self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
-		except KeyError:
-			print("Key not found in configuration. Was setup completed?")
-			self.canvas_client = Canvas(None, None)
 
 	def interactive_setup(self):
 		printer.print_divider("Canvas Setup")
 		canvas_api_url = input("Paste your Canvas URL (e.g. https://canvas.oregonstate.edu/): ")
 		self.config_manager.update_config('canvas', 'url', canvas_api_url)
-		self.config_manager.update_config('canvas', 'api_key', "")
-		self.canvas_client = Canvas(canvas_api_url, None)
+		# canvas_api_key = input("Paste your Canvas API key: ")
+		# self.config_manager.update_config('canvas', 'api_key', canvas_api_key)
+		self.config_manager.update_config('canvas', 'setup_complete', 'True')
+		self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
 
 	def create_course_map(self):
 		user = self.canvas_client.get_current_user()
