@@ -29,4 +29,11 @@ class ConfigManager:
 		self.load_config()
 		return self.config_parser[section].getboolean(attribute)
 
+	def setup_complete(self):
+		try:
+			return self.get_boolean('setup', 'setup_complete')
+		except KeyError:
+			return False
+
+
 
