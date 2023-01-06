@@ -25,4 +25,8 @@ class ConfigManager:
 		self.load_config()
 		return self.config_parser[section][attribute]
 
+	def get_boolean(self, section, attribute):
+		self.load_config()
+		return self.config_parser[section].getboolean(attribute)
+
 
