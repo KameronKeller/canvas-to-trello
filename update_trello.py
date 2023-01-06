@@ -9,5 +9,4 @@ trello_manager = TrelloManager(config_manager)
 database_manager = DatabaseManager(canvas_manager, trello_manager)
 
 database_manager.update_database()
-
-# database_manager.send_assignments_to_trello()
+database_manager.send_assignments_to_trello()
