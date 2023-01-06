@@ -1,6 +1,7 @@
 import re
 from commandline_printer import CommandLinePrinter as printer
 from canvasapi import Canvas
+import datetime
 
 class CanvasManager:
 
@@ -68,3 +69,15 @@ class CanvasManager:
 		else:
 			term = False
 		return term
+
+	def get_course_year(self, course):
+		start_at = course['start_at']
+		if start_at is None:
+			return None
+		else:
+			year = datetime.datetime.strptime(start_at, self.time_format)
+			return year
+
+	def in_current_year(self, course, current_year=datetime.date.today().year):
+		course_year = self.get_course_year(course)
+		return course_year == current_year
