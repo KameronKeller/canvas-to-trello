@@ -1,5 +1,5 @@
-# Ignore the config file to prevent sharing of API keys
-config.ini
+# Ignore the config files to prevent sharing of API keys
+*.ini
 
 # Ignore the Python virutal environment
 env/
