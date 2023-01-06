@@ -3,3 +3,6 @@ config.ini
 
 # Ignore the Python virutal environment
 env/
+
+# Ignore python files
+__pycache__/
