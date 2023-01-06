@@ -4,6 +4,7 @@ from database_manager import DatabaseManager
 from trello_manager import TrelloManager
 
 def sync():
+	print("Syncing to Trello. This may take a minute...")
 	config_manager = ConfigManager()
 	canvas_manager = CanvasManager(config_manager)
 	trello_manager = TrelloManager(config_manager)
