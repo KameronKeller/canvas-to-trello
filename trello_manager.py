@@ -7,21 +7,20 @@ class TrelloManager:
 
 	def __init__(self, config_manager):
 		self.config_manager = config_manager
-		if self.config_manager.get_configuration('trello', 'setup_complete'):
+		if self.config_manager.get_boolean('trello', 'setup_complete'):
 			trello_api_key = self.config_manager.get_configuration('trello', 'api_key')
 			trello_api_token = self.config_manager.get_configuration('trello', 'api_token')
 			self.trello_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
 			self.selected_board = self.get_selected_board()
 			self.selected_list = self.get_selected_list()
-		else:
-			raise Exception("Setup is not complete. Run setup before continuing.")
+			self.labels_map = self.make_board_labels_map()
 
 	def interactive_setup(self):
 		printer.print_divider("Trello Setup")
 		trello_api_key, trello_api_token = self.request_api_info()
 		self.config_manager.update_config('trello', 'api_key', trello_api_key)
 		self.config_manager.update_config('trello', 'api_token', trello_api_token)
-		self.config_manager.update_config('trello', 'setup_complete', True)
+		self.config_manager.update_config('trello', 'setup_complete', 'True')
 		self.trello_client = TrelloClient(api_key=trello_api_key, api_secret=trello_api_token)
 		selected_board = self.select_board()
 		self.select_list(selected_board)
@@ -46,6 +45,9 @@ class TrelloManager:
 		print("Select the Trello board you would like to copy Canvas assignments to.")
 		menu_entry_index = terminal_menu.show()
 		selected_board = board_names[menu_entry_index]
+		if selected_board == 'Create New':
+			selected_board = input("Type the name of the new board: ")
+			self.trello_client.add_board(selected_board)
 		selected_board = self.store_board_id(selected_board)
 		return selected_board
 
@@ -67,6 +69,9 @@ class TrelloManager:
 		print("Select the board list you would like assignments to be added to.")
 		menu_entry_index = terminal_menu.show()
 		selected_list = list_names[menu_entry_index]
+		if selected_list == 'Create New':
+			selected_list = input("Type the name of the list: ")
+			board.add_list(selected_list)
 		self.store_list_id(board, selected_list)
 
 	def get_list_names(self, board):
@@ -90,16 +95,24 @@ class TrelloManager:
 		return self.trello_client.get_board(board_id)
 
 	def get_board_label_names(self):
-		board = self.get_selected_board()
-		labels = board.get_labels()
+		labels = self.selected_board.get_labels()
 		label_names = set()
 		for label in labels:
 			label_names.add(label.name)
 		return label_names
 
-	def add_label(self, name):
-		board = self.get_selected_board()
-		board.add_label(name, 'yellow')
+	def make_board_labels_map(self):
+		labels = self.selected_board.get_labels()
+		labels_map = {}
+		for label in labels:
+			labels_map[label.name] = label
+		if 'submitted' not in labels_map:
+			submitted = self.add_label('Submitted', 'green')
+			labels_map['submitted'] = submitted
+		return labels_map
+
+	def add_label(self, name, color='yellow'):
+		return self.selected_board.add_label(name, color)
 
 	def get_selected_list(self):
 		board = self.selected_board
