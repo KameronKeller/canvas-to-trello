@@ -3,7 +3,6 @@ from canvas_manager import CanvasManager
 from trello_manager import TrelloManager
 from database_manager import DatabaseManager
 
-
 def setup():
 	CONFIG_SECTIONS = ['canvas', 'trello', 'setup']
 
@@ -20,3 +19,4 @@ def setup():
 	canvas_manager.interactive_setup()
 	trello_manager.interactive_setup()
 	database_manager.setup_database()
+	config_manager.update_config('setup', 'setup_complete', 'True')
