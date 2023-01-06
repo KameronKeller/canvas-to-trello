@@ -119,4 +119,28 @@ class TrelloManager:
 		list_id = self.config_manager.get_configuration('trello', 'list_id')
 		return board.get_list(list_id)
 
+	def add_card(self, name, due_date, labels):
+		return self.selected_list.add_card(name, desc=None, labels=labels, due=due_date)
+
+	def update_card(self, id, name, due_date, labels):
+		card = self.trello_client.get_card(id)
+		card.set_name(name)
+		card.set_due(due_date)
+		for label in labels:
+			card.add_label(label)
+		return card
+
+	def create_labels(self, submitted, course_name):
+		if course_name not in self.labels_map:
+			label = self.add_label(course_name)
+			self.labels_map[course_name] = label
+
+		if submitted:
+			labels = [self.labels_map[course_name], self.labels_map["submitted"]]
+		else:
+			labels = [self.labels_map[course_name]]
+
+		return labels
+
+
 

@@ -40,13 +40,15 @@ class CanvasManager:
 			# Get course code and section number
 			course_number = self.get_course_number(name)
 
-			term = self.get_term(name)
+			# term = self.get_term(course)
 
 			start_at = course.start_at
 
 			# Both a course number and term number are required
-			if course_number and term:
-				course_map[course_number] = {"course" : course, "term" : term, "start_at" : start_at}
+			# if course_number and term:
+			if course_number:
+				# course_map[course_number] = {"course" : course, "term" : term, "start_at" : start_at}
+				course_map[course_number] = {"course" : course, "start_at" : start_at}
 		return course_map
 
 	def get_course_number(self, name):
@@ -60,24 +62,51 @@ class CanvasManager:
 			course_number = False
 		return course_number
 
-	def get_term(self, name):
-		# Sample return: "F2022" AKA 'Fall 2022'
-		term_pattern = re.compile(r"\w{1}\d{4}")
-		term = term_pattern.search(name)
-		if term:
-			term = term.group(0)
-		else:
-			term = False
-		return term
+	# def get_term(self, name):
+	# 	# Sample return: "F2022" AKA 'Fall 2022'
+	# 	term_pattern = re.compile(r"\w{1}\d{4}")
+	# 	term = term_pattern.search(name)
+	# 	if term:
+	# 		term = term.group(0)
+	# 	else:
+	# 		term = False
+	# 	return term
 
 	def get_course_year(self, course):
 		start_at = course['start_at']
 		if start_at is None:
 			return None
 		else:
-			year = datetime.datetime.strptime(start_at, self.time_format)
-			return year
+			start_at = datetime.datetime.strptime(start_at, self.time_format)
+		return start_at.year
 
 	def in_current_year(self, course, current_year=datetime.date.today().year):
 		course_year = self.get_course_year(course)
 		return course_year == current_year
+
+	def get_assignments(self, course):
+		assignments = course['course'].get_assignments()
+		return assignments
+
+	def get_quizzes(self, course):
+		quizzes = course['course'].get_quizzes()
+		return quizzes
+
+	# def get_term(self, course):
+	# 	return course['term']
+
+	def get_assignment_name(self, assignment):
+		if hasattr(assignment, "name"):
+			assignment_name = assignment.name
+		# Quizzes don't have names, they have titles
+		else:
+			assignment_name = assignment.title
+		return assignment_name
+
+	def get_submission_status(self, assignment):
+		if hasattr(assignment, "has_submitted_submissions"):
+			submitted = assignment.has_submitted_submissions
+		# If assignment or quiz does not have the attribute, assume not submitted
+		else:
+			submitted = False
+		return submitted
