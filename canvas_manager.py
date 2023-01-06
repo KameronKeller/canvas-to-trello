@@ -39,15 +39,10 @@ class CanvasManager:
 
 			# Get course code and section number
 			course_number = self.get_course_number(name)
-
-			# term = self.get_term(course)
-
 			start_at = course.start_at
 
-			# Both a course number and term number are required
-			# if course_number and term:
+			# A course number is required
 			if course_number:
-				# course_map[course_number] = {"course" : course, "term" : term, "start_at" : start_at}
 				course_map[course_number] = {"course" : course, "start_at" : start_at}
 		return course_map
 
@@ -61,16 +56,6 @@ class CanvasManager:
 		else:
 			course_number = False
 		return course_number
-
-	# def get_term(self, name):
-	# 	# Sample return: "F2022" AKA 'Fall 2022'
-	# 	term_pattern = re.compile(r"\w{1}\d{4}")
-	# 	term = term_pattern.search(name)
-	# 	if term:
-	# 		term = term.group(0)
-	# 	else:
-	# 		term = False
-	# 	return term
 
 	def get_course_year(self, course):
 		start_at = course['start_at']
@@ -91,9 +76,6 @@ class CanvasManager:
 	def get_quizzes(self, course):
 		quizzes = course['course'].get_quizzes()
 		return quizzes
-
-	# def get_term(self, course):
-	# 	return course['term']
 
 	def get_assignment_name(self, assignment):
 		if hasattr(assignment, "name"):
