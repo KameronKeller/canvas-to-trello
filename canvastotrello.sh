@@ -10,9 +10,17 @@ fi
 python3 -m venv env
 source env/bin/activate
 
-# Install required python packages
-echo "========== Install Required Packages =========="
-pip install -r requirements.txt
+# Get the setup_complete variable from the .ini config file to determine if the master setup is complete
+    # -A1 means to read 1 row from the setup section.
+    # tr -d ' ' means to ignore spaces
+source <(grep = <(grep -A1 "\[setup\]" config.ini | tr -d " "))
+
+if $setup_complete
+then
+    # Install required python packages
+    echo "========== Install Required Packages =========="
+    pip install -r requirements.txt
+fi
 
 # Run program
 python3 canvastotrello.py
