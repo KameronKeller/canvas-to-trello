@@ -2,6 +2,7 @@
 
 install_python_packages () {
     echo "========== Install Required Packages =========="
+    pip install wheel
     pip install -r requirements.txt
 }
 
