@@ -1,3 +1,4 @@
+wheel
 py-trello
 canvasapi
 simple_term_menu
