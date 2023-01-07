@@ -15,7 +15,7 @@ source env/bin/activate
     # tr -d ' ' means to ignore spaces
 source <(grep = <(grep -A1 "\[setup\]" config.ini | tr -d " "))
 
-if $setup_complete
+if ! $setup_complete
 then
     # Install required python packages
     echo "========== Install Required Packages =========="
