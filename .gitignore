@@ -6,3 +6,6 @@ env/
 
 # Ignore python files
 __pycache__/
+
+# Ignore database files
+*.db
