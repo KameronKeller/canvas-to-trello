@@ -1,94 +1,60 @@
-# canvas-to-trello
-<!-- # Project Title -->
+# Canvas to Trello
 
-One Paragraph of the project description
+Canvas to Trello is an application for syncing Canvas assignments to a Trello board of your choice. It imports the assignment name, due date, submission status, and course from Canvas to Trello cards. It also will update cards if an assignment changes. 
 
-Initially appeared on
-[gist](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2). But the page cannot open anymore so that is why I have moved it here.
+![trello-screenshot](img/trello-screenshot.png)
 
 ## Getting Started
 
-These instructions will give you a copy of the project up and running on
-your local machine for development and testing purposes. See deployment
-for notes on deploying the project on a live system.
+**IMPORTANT: This application is for my personal use and will not successfully run in its current state.**
+
+**According to Canvas, "asking any other user to manually generate a token and enter it into your application is a violation of Canvas' terms of service." Canvas requires the authentication protocol, OAuth, for an application like this one. To use OAuth, individual institutions using Canvas would have to approve the use of this application in their system. Rather than jump through these hoops, this application is for my personal use only and the portion of the application that would ask for a token has been disabled.**
+
+Note: This application stores all API information locally.
 
 ### Prerequisites
 
-Requirements for the software and other tools to build, test and push 
-- [Example 1](https://www.example.com)
-- [Example 2](https://www.example.com)
+Requirements for this software:
+- [A Trello Account](https://trello.com/)
+- [A Canvas Account (normally provided by your institution)](https://www.instructure.com/canvas)
+- [Python3](https://www.python.org/downloads/)
+- [SQLite](https://www.sqlite.org/index.html)
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development
-environment running
+First, clone this repository and navigate to the cloned repository with the terminal of your choice.
 
-Say what the step will be
+Make the shell script executable:
 
-    Give the example
+    chmod +x canvastotrello.sh
 
-And repeat
+To run, use the following:
 
-    until finished
+    ./canvastotrello.sh
 
-End with an example of getting some data out of the system or using it
-for a little demo
+The first time the program runs it will guide you through an interactive setup. After the setup is complete, running it again will re-sync Canvas assignments to Trello, adding or updating cards as needed.
 
-## Running the tests
+## Future Development
 
-Explain how to run the automated tests for this system
+Goals:
 
-### Sample Tests
+- Set up OAuth and publish this app on a website like [EduAppCenter](https://www.eduappcenter.com/), allowing learning institutions to add this application to their system.
 
-Explain what these tests test and why
-
-    Give an example
-
-### Style test
-
-Checks if the best practices and the right coding style has been used.
-
-    Give an example
-
-## Deployment
-
-Add additional notes to deploy this on a live system
-
-## Built With
-
-  - [Contributor Covenant](https://www.contributor-covenant.org/) - Used
-    for the Code of Conduct
-  - [Creative Commons](https://creativecommons.org/) - Used to choose
-    the license
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code
-of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [Semantic Versioning](http://semver.org/) for versioning. For the versions
-available, see the [tags on this
-repository](https://github.com/PurpleBooth/a-good-readme-template/tags).
 
 ## Authors
 
-  - **Billie Thompson** - *Provided README Template* -
-    [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of
-[contributors](https://github.com/PurpleBooth/a-good-readme-template/contributors)
-who participated in this project.
+  - [KameronKeller](https://github.com/KameronKeller)
 
 ## License
 
-This project is licensed under the [CC0 1.0 Universal](LICENSE.md)
-Creative Commons License - see the [LICENSE.md](LICENSE.md) file for
+This project is licensed under the [GNU GPLv3 ](LICENSE.md)
+GNU General Public License - see the [LICENSE.md](LICENSE.md) file for
 details
 
 ## Acknowledgments
 
-  - Hat tip to anyone whose code is used
-  - Inspiration
-  - etc
+Thanks to the following Python packages!
+
+  - [py-trello](https://github.com/sarumont/py-trello) for the Trello API wrapper.
+  - [canvasapi](https://github.com/ucfopen/canvasapi) for the Canvas API wrapper.
+  - [simple-term-menu](https://github.com/IngoMeyer441/simple-term-menu) for the nice command line tool.
