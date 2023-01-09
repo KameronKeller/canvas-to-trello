@@ -123,7 +123,7 @@ class TrelloManager:
 	def add_card(self, name, due_date, labels):
 		return self.selected_list.add_card(name, desc=None, labels=labels, due=due_date)
 
-	def update_card(self, id, name, due_date, labels):
+	def update_card(self, id, name, due_date, labels, time_format):
 		card = self.trello_client.get_card(id)
 		existing_labels = set(card.labels)
 		if due_date is not None:
