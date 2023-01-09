@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Get the parent path so the application can be called with an alias from any directory
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+pushd $parent_path 
+
 install_python_packages () {
     echo "========== Install Required Packages =========="
     pip install wheel
@@ -39,4 +43,6 @@ python3 canvastotrello.py
 
 # Deactivate the Python virtual environment
 deactivate
+
+popd
 
