@@ -26,16 +26,24 @@ class DatabaseManager:
 		try:
 			connection, cursor = self.connect_to_database()
 			for course_name, course in canvas_courses.items():
-				if self.canvas_manager.in_current_year(course):
+				if self.canvas_manager.in_current_year(course) or self.canvas_manager.get_course_year(course) == None:
 
 					assignments = self.canvas_manager.get_assignments(course)
 					quizzes = self.canvas_manager.get_quizzes(course)
 
-					for assignment in assignments:
-						self.add_to_database(connection, cursor, course_name, assignment)
+					try:
+						for assignment in assignments:
+							self.add_to_database(connection, cursor, course_name, assignment)
+					except Exception:
+						print('No assignments found for: ', course_name)
+						continue
 
-					for quiz in quizzes:
-						self.add_to_database(connection, cursor, course_name, quiz)
+					try:
+						for quiz in quizzes:
+							self.add_to_database(connection, cursor, course_name, quiz)
+					except Exception:
+						print('No quizzes found for: ', course_name)
+						continue
 
 			connection.close()
 		except sqlite3.Error as error:
@@ -104,7 +112,7 @@ class DatabaseManager:
 				labels = self.trello_manager.create_labels(submitted, course_name)
 
 				if in_trello and sync_needed:
-					card = self.trello_manager.update_card(trello_card_id, course_name, due_date, labels)
+					card = self.trello_manager.update_card(trello_card_id, assignment_name, due_date, labels, self.canvas_manager.time_format)
 				elif sync_needed:
 					card = self.trello_manager.add_card(assignment_name, due_date, labels)
 
