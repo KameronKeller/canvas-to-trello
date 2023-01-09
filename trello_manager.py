@@ -2,6 +2,7 @@ import webbrowser
 from commandline_printer import CommandLinePrinter as printer
 from trello import TrelloClient
 from simple_term_menu import TerminalMenu
+import datetime
 
 class TrelloManager:
 
@@ -124,10 +125,14 @@ class TrelloManager:
 
 	def update_card(self, id, name, due_date, labels):
 		card = self.trello_client.get_card(id)
+		existing_labels = set(card.labels)
+		if due_date is not None:
+			due_date = datetime.datetime.strptime(due_date, time_format)
+			card.set_due(due_date)
 		card.set_name(name)
-		card.set_due(due_date)
 		for label in labels:
-			card.add_label(label)
+			if label not in existing_labels:
+				card.add_label(label)
 		return card
 
 	def create_labels(self, submitted, course_name):
