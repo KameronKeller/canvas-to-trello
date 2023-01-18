@@ -2,6 +2,7 @@ import re
 from commandline_printer import CommandLinePrinter as printer
 from canvasapi import Canvas
 import datetime
+from simple_term_menu import TerminalMenu
 
 class CanvasManager:
 
@@ -21,7 +22,20 @@ class CanvasManager:
 		# canvas_api_key = input("Paste your Canvas API key: ")
 		# self.config_manager.update_config('canvas', 'api_key', canvas_api_key)
 		self.config_manager.update_config('canvas', 'setup_complete', 'True')
-		self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
+		# self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
+		self = CanvasManager(self.config_manager)
+		self.select_terms_to_sync()
+
+	def select_terms_to_sync(self):
+		terms = self.get_terms()
+		terminal_menu = TerminalMenu(terms, multi_select=True, show_multi_select_hint=True)
+		print("Select the initial terms you would like to sync to Trello. Future terms will be added automatically.")
+		menu_entry_indices = terminal_menu.show()
+		selected_terms = terminal_menu.chosen_menu_entries
+		self.store_selected_terms(selected_terms)
+
+	def store_selected_terms(self, selected_terms):
+		self.config_manager.update_config('canvas', 'terms_to_sync', selected_terms)
 
 	def create_course_map(self):
 		user = self.canvas_client.get_current_user()
@@ -58,7 +72,7 @@ class CanvasManager:
 		return course_map
 
 	def get_terms(self):
-		return set(self.course_map.keys())
+		return list(self.course_map.keys())
 
 	def get_course_number(self, name):
 		# Returns the course number with the section number
