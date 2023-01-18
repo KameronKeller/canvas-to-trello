@@ -2,7 +2,8 @@ import re
 from commandline_printer import CommandLinePrinter as printer
 from canvasapi import Canvas
 import datetime
-from simple_term_menu import TerminalMenu
+from simple_term_menu import 
+import json
 
 class CanvasManager:
 
@@ -14,6 +15,9 @@ class CanvasManager:
 			canvas_api_key = self.config_manager.get_configuration('canvas', 'api_key')
 			self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
 			self.course_map = self.create_course_map()
+			self.update_terms_to_sync()
+			self.skipped_terms = json.loads(self.config_manager.get_configuration('canvas', 'terms_to_skip'))
+			self.selected_terms = json.loads(self.config_manager.get_configuration('canvas', 'terms_to_sync'))
 
 	def interactive_setup(self):
 		printer.print_divider("Canvas Setup")
@@ -25,6 +29,13 @@ class CanvasManager:
 		# self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
 		self = CanvasManager(self.config_manager)
 		self.select_terms_to_sync()
+
+	def update_terms_to_sync(self):
+		all_terms = self.get_terms()
+		for term in all_terms:
+			if term not in self.skipped_terms or term not in self.selected_terms:
+				self.selected_terms += [term]
+		self.store_selected_terms(selected_terms)
 
 	def select_terms_to_sync(self):
 		terms = self.get_terms()
@@ -114,7 +125,11 @@ class CanvasManager:
 		return course_year == current_year
 
 	def get_assignments(self, course):
-		assignments = course['course'].get_assignments()
+		assignments = []
+		all_assignments = course['course'].get_assignments()
+		for assignment in all_assignments:
+			if not assignment.locked_for_user:
+				assignments.append(assignment)
 		return assignments
 
 	def get_quizzes(self, course):
