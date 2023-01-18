@@ -12,6 +12,7 @@ class CanvasManager:
 			canvas_api_url = self.config_manager.get_configuration('canvas', 'url')
 			canvas_api_key = self.config_manager.get_configuration('canvas', 'api_key')
 			self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
+			self.course_map = self.create_course_map()
 
 	def interactive_setup(self):
 		printer.print_divider("Canvas Setup")
@@ -39,11 +40,21 @@ class CanvasManager:
 
 			# Get course code and section number
 			course_number = self.get_course_number(name)
+			term = self.get_course_term(name)
 			start_at = course.start_at
 
-			# A course number is required
-			if course_number:
-				course_map[course_number] = {"course" : course, "start_at" : start_at}
+			# # A course number is required
+			# if course_number:
+			# 	course_map[course_number] = {"course" : course, "start_at" : start_at}
+
+			# A term is required
+			if term:
+				course_map[term] = {
+					course_number : {
+						"course" : course
+					}
+				}
+
 		return course_map
 
 	def get_course_number(self, name):
