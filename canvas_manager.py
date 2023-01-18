@@ -57,6 +57,9 @@ class CanvasManager:
 
 		return course_map
 
+	def get_terms(self):
+		return set(self.course_map.keys())
+
 	def get_course_number(self, name):
 		# Returns the course number with the section number
 		# Sample return = "CS_161_501" or "FES_365_501"
