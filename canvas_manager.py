@@ -32,10 +32,15 @@ class CanvasManager:
 		print("Select the initial terms you would like to sync to Trello. Future terms will be added automatically.")
 		menu_entry_indices = terminal_menu.show()
 		selected_terms = terminal_menu.chosen_menu_entries
+		skipped = list(set(terms) - set(selected_terms))
 		self.store_selected_terms(selected_terms)
+		self.store_skipped_terms(skipped)
 
 	def store_selected_terms(self, selected_terms):
 		self.config_manager.update_config('canvas', 'terms_to_sync', selected_terms)
+
+	def store_skipped_terms(self, skipped_terms):
+		self.config_manager.update_config('canvas', 'terms_to_skip', skipped_terms)
 
 	def create_course_map(self):
 		user = self.canvas_client.get_current_user()
