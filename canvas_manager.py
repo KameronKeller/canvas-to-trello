@@ -48,14 +48,25 @@ class CanvasManager:
 
 	def get_course_number(self, name):
 		# Returns the course number with the section number
-		# Sample return = "CS_161_501"
-		course_number_pattern = re.compile(r"\w{2}_\d{3}_\d{3}")
+		# Sample return = "CS_161_501" or "FES_365_501"
+		course_number_pattern = re.compile(r"\w{2,3}_\d{3}_\d{3}")
 		course_number = course_number_pattern.search(name)
 		if course_number:
 			course_number = course_number.group(0)
 		else:
 			course_number = False
 		return course_number
+
+	def get_course_term(self, name):
+		# Returns the term of a course
+		# Sample return = "W2021" for Winter 2021
+		term_pattern = re.compile(r"\w{1}\d{4}")
+		term = term_pattern.search(name)
+		if term:
+			term = term.group(0)
+		else:
+			term = False
+		return term
 
 	def get_course_year(self, course):
 		start_at = course['start_at']
