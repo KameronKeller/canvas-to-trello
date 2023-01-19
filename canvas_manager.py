@@ -80,20 +80,10 @@ class CanvasManager:
 			# Get course code and section number
 			course_number = self.get_course_number(name)
 			term = self.get_course_term(name)
-			# start_at = course.start_at
-
-			# # A course number is required
-			# if course_number:
-			# 	course_map[course_number] = {"course" : course, "start_at" : start_at}
 
 			# A term is required
 			if term:
 				course_map[term].append((course_number, course))
-				# course_map[term] = {
-				# 	course_number : {
-				# 		"course" : course
-				# 	}
-				# }
 
 		return course_map
 

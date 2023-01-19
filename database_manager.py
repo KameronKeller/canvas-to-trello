@@ -22,7 +22,6 @@ class DatabaseManager:
 		return connection, cursor
 
 	def update_database(self):
-		# canvas_courses = self.canvas_manager.create_course_map()
 		canvas_terms = self.canvas_manager.selected_terms()
 		course_map = self.canvas_manager.course_map
 		try:
@@ -30,8 +29,6 @@ class DatabaseManager:
 			for term in canvas_terms:
 
 				for course_name, course in course_map[term]:
-					# if self.canvas_manager.in_current_year(course) or self.canvas_manager.get_course_year(course) == None:
-
 					assignments = self.canvas_manager.get_assignments(course)
 					quizzes = self.canvas_manager.get_quizzes(course)
 
