@@ -29,6 +29,9 @@ class ConfigManager:
 		self.load_config()
 		return self.config_parser[section].getboolean(attribute)
 
+	def has_option(self, section, attribute):
+		return self.config_parser.has_option(section, attribute)
+
 	def setup_complete(self):
 		try:
 			return self.get_boolean('setup', 'setup_complete')
