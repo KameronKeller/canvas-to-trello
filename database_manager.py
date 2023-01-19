@@ -22,11 +22,15 @@ class DatabaseManager:
 		return connection, cursor
 
 	def update_database(self):
-		canvas_courses = self.canvas_manager.create_course_map()
+		# canvas_courses = self.canvas_manager.create_course_map()
+		canvas_terms = self.canvas_manager.selected_terms()
+		course_map = self.canvas_manager.course_map
 		try:
 			connection, cursor = self.connect_to_database()
-			for course_name, course in canvas_courses.items():
-				if self.canvas_manager.in_current_year(course) or self.canvas_manager.get_course_year(course) == None:
+			for term in canvas_terms:
+
+				for course_name, course in course_map[term]:
+					# if self.canvas_manager.in_current_year(course) or self.canvas_manager.get_course_year(course) == None:
 
 					assignments = self.canvas_manager.get_assignments(course)
 					quizzes = self.canvas_manager.get_quizzes(course)
@@ -113,8 +117,10 @@ class DatabaseManager:
 
 				if in_trello and sync_needed:
 					card = self.trello_manager.update_card(trello_card_id, assignment_name, due_date, labels, self.canvas_manager.time_format)
+					print('Task Updated: {}, {}'.format(course_name, assignment_name))
 				elif sync_needed:
 					card = self.trello_manager.add_card(assignment_name, due_date, labels)
+					print('Task added: {}, {}'.format(course_name, assignment_name))
 
 				update_data = (card.id, assignment_id)
 				cursor.execute(update_query, update_data)
