@@ -149,9 +149,10 @@ class CanvasManager:
 		return assignment_name
 
 	def get_submission_status(self, assignment):
-		if hasattr(assignment, "has_submitted_submissions"):
-			submitted = assignment.has_submitted_submissions
-		# If assignment or quiz does not have the attribute, assume not submitted
+		user = self.canvas_client.get_current_user()
+		submission = assignment.get_submission(user)
+		submission_status = submission.workflow_state
+		if submission_status == 'unsubmitted':
+			return False
 		else:
-			submitted = False
-		return submitted
+			return True
