@@ -1,9 +1,10 @@
 import re
+import ast
+import datetime
 from commandline_printer import CommandLinePrinter as printer
 from canvasapi import Canvas
-import datetime
-from simple_term_menu import 
-import json
+from simple_term_menu import TerminalMenu
+from collections import defaultdict
 
 class CanvasManager:
 
@@ -16,8 +17,6 @@ class CanvasManager:
 			self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
 			self.course_map = self.create_course_map()
 			self.update_terms_to_sync()
-			self.skipped_terms = json.loads(self.config_manager.get_configuration('canvas', 'terms_to_skip'))
-			self.selected_terms = json.loads(self.config_manager.get_configuration('canvas', 'terms_to_sync'))
 
 	def interactive_setup(self):
 		printer.print_divider("Canvas Setup")
@@ -26,37 +25,47 @@ class CanvasManager:
 		# canvas_api_key = input("Paste your Canvas API key: ")
 		# self.config_manager.update_config('canvas', 'api_key', canvas_api_key)
 		self.config_manager.update_config('canvas', 'setup_complete', 'True')
-		# self.canvas_client = Canvas(canvas_api_url, canvas_api_key)
 		self = CanvasManager(self.config_manager)
 		self.select_terms_to_sync()
 
 	def update_terms_to_sync(self):
 		all_terms = self.get_terms()
-		for term in all_terms:
-			if term not in self.skipped_terms or term not in self.selected_terms:
-				self.selected_terms += [term]
-		self.store_selected_terms(selected_terms)
+		if self.config_manager.has_option('canvas', 'terms_to_skip') and self.config_manager.has_option('canvas', 'terms_to_sync'):
+			skipped_terms = self.skipped_terms()
+			selected_terms = self.selected_terms()
+			for term in all_terms:
+				if term not in skipped_terms and term not in selected_terms:
+					selected_terms += [term]
+			self.store_selected_terms(selected_terms)
+
+	def skipped_terms(self):
+		skipped_terms = ast.literal_eval(self.config_manager.get_configuration('canvas', 'terms_to_skip'))
+		return skipped_terms
+
+	def selected_terms(self):
+		selected_terms = ast.literal_eval(self.config_manager.get_configuration('canvas', 'terms_to_sync'))
+		return selected_terms
 
 	def select_terms_to_sync(self):
 		terms = self.get_terms()
 		terminal_menu = TerminalMenu(terms, multi_select=True, show_multi_select_hint=True)
 		print("Select the initial terms you would like to sync to Trello. Future terms will be added automatically.")
 		menu_entry_indices = terminal_menu.show()
-		selected_terms = terminal_menu.chosen_menu_entries
+		selected_terms = list(terminal_menu.chosen_menu_entries)
 		skipped = list(set(terms) - set(selected_terms))
 		self.store_selected_terms(selected_terms)
 		self.store_skipped_terms(skipped)
 
 	def store_selected_terms(self, selected_terms):
-		self.config_manager.update_config('canvas', 'terms_to_sync', selected_terms)
+		self.config_manager.update_config('canvas', 'terms_to_sync', str(selected_terms))
 
 	def store_skipped_terms(self, skipped_terms):
-		self.config_manager.update_config('canvas', 'terms_to_skip', skipped_terms)
+		self.config_manager.update_config('canvas', 'terms_to_skip', str(skipped_terms))
 
 	def create_course_map(self):
 		user = self.canvas_client.get_current_user()
 		courses = user.get_courses()
-		course_map = {}
+		course_map = defaultdict(list)
 		for course in courses:
 			try:
 				# If the user assigned an alias for the course, get the original name
@@ -71,7 +80,7 @@ class CanvasManager:
 			# Get course code and section number
 			course_number = self.get_course_number(name)
 			term = self.get_course_term(name)
-			start_at = course.start_at
+			# start_at = course.start_at
 
 			# # A course number is required
 			# if course_number:
@@ -79,11 +88,12 @@ class CanvasManager:
 
 			# A term is required
 			if term:
-				course_map[term] = {
-					course_number : {
-						"course" : course
-					}
-				}
+				course_map[term].append((course_number, course))
+				# course_map[term] = {
+				# 	course_number : {
+				# 		"course" : course
+				# 	}
+				# }
 
 		return course_map
 
@@ -126,7 +136,7 @@ class CanvasManager:
 
 	def get_assignments(self, course):
 		assignments = []
-		all_assignments = course['course'].get_assignments()
+		all_assignments = course.get_assignments()
 		for assignment in all_assignments:
 			if not assignment.locked_for_user:
 				assignments.append(assignment)
@@ -134,7 +144,7 @@ class CanvasManager:
 
 	def get_quizzes(self, course):
 		quizzes = []
-		all_quizzes = course['course'].get_quizzes()
+		all_quizzes = course.get_quizzes()
 		for quiz in quizzes:
 			if not quiz.locked_for_user:
 				quizzes.append(quiz)
