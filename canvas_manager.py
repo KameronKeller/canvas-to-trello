@@ -133,7 +133,11 @@ class CanvasManager:
 		return assignments
 
 	def get_quizzes(self, course):
-		quizzes = course['course'].get_quizzes()
+		quizzes = []
+		all_quizzes = course['course'].get_quizzes()
+		for quiz in quizzes:
+			if not quiz.locked_for_user:
+				quizzes.append(quiz)
 		return quizzes
 
 	def get_assignment_name(self, assignment):
