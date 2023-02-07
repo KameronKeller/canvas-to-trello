@@ -67,6 +67,8 @@ class DatabaseManager:
 									OR
 									due_date <> ?
 									OR
+									due_date is NULL
+									OR
 									submitted <> ?"""
 
 		selected_list = self.trello_manager.selected_list
