@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS ASSIGNMENTS (
 	submitted		integer,
 	in_trello		integer		DEFAULT 0,
 	trello_card_id	text,
-	sync_needed		integer		DEFAULT 1
+	sync_needed		integer		DEFAULT 1,
+	assignment_link text		DEFAULT ''
 	);
