@@ -108,7 +108,7 @@ class TrelloManager:
 		for label in labels:
 			labels_map[label.name] = label
 		if 'submitted' not in labels_map:
-			submitted = self.add_label('Submitted', 'green')
+			submitted = self.add_label('Submitted', 'sky')
 			labels_map['submitted'] = submitted
 		return labels_map
 
@@ -120,10 +120,10 @@ class TrelloManager:
 		list_id = self.config_manager.get_configuration('trello', 'list_id')
 		return board.get_list(list_id)
 
-	def add_card(self, name, due_date, labels):
-		return self.selected_list.add_card(name, desc=None, labels=labels, due=due_date)
+	def add_card(self, name, due_date, labels, assignment_link):
+		return self.selected_list.add_card(name, desc=assignment_link, labels=labels, due=due_date)
 
-	def update_card(self, id, name, due_date, labels, time_format):
+	def update_card(self, id, name, due_date, labels, time_format, assignment_link):
 		card = self.trello_client.get_card(id)
 		existing_labels = set(card.labels)
 		if due_date is not None:
@@ -133,6 +133,9 @@ class TrelloManager:
 		for label in labels:
 			if label not in existing_labels:
 				card.add_label(label)
+		card_description = card.description
+		if assignment_link not in card_description:
+			card.set_description(card_description + '\n' + assignment_link)
 		return card
 
 	def create_labels(self, submitted, course_name):
