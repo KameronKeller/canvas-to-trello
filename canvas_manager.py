@@ -156,3 +156,6 @@ class CanvasManager:
 			return False
 		else:
 			return True
+
+	def get_assignment_link(self, assignment):
+		return assignment.html_url
