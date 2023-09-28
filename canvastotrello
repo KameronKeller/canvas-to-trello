@@ -31,7 +31,7 @@ else
         # tr -d ' ' means to ignore spaces
     source <(grep = <(grep -A1 "\[setup\]" config.ini | tr -d " "))
 
-    if ! $setup_complete
+    if [[ "$setup_complete" != "True" ]]
     then
         # Install required python packages
         install_python_packages
