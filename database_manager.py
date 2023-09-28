@@ -55,39 +55,46 @@ class DatabaseManager:
 
 	def add_to_database(self, connection, cursor, course_name, assignment):
 		insert_query = """INSERT INTO ASSIGNMENTS
-							VALUES (?, ?, ?, ?, ?, 0, '', 1)
+							VALUES (?, ?, ?, ?, ?, 0, '', 1, ?)
 							ON CONFLICT(id) DO
 								UPDATE SET
 									assignment_name=?,
 									due_date=?,
 									submitted=?,
-									sync_needed=1
+									sync_needed=1,
+									assignment_link=?
 								WHERE
 									assignment_name <> ?
 									OR
 									due_date <> ?
 									OR
-									due_date is NULL
+									-- due_date is NULL
+									-- OR
+									submitted <> ?
 									OR
-									submitted <> ?"""
+									assignment_link <> ?"""
 
 		selected_list = self.trello_manager.selected_list
 		assignment_name = self.canvas_manager.get_assignment_name(assignment)
 		submitted = self.canvas_manager.get_submission_status(assignment)
 		assignment_id = assignment.id
 		due_date = assignment.due_at
+		assignment_link = self.canvas_manager.get_assignment_link(assignment)
 
 		data = (assignment_id,
 				course_name,
 				assignment_name,
 				due_date,
 				submitted,
+				assignment_link,
 				assignment_name,
 				due_date,
 				submitted,
+				assignment_link,
 				assignment_name,
 				due_date,
-				submitted)
+				submitted,
+				assignment_link)
 
 		cursor.execute(insert_query, data)
 		connection.commit()
@@ -111,15 +118,16 @@ class DatabaseManager:
 				in_trello = row[5]
 				trello_card_id = row[6]
 				sync_needed = row[7]
+				assignment_link = row[8]
 
 				labels = self.trello_manager.create_labels(submitted, course_name)
 
 				if in_trello and sync_needed:
-					card = self.trello_manager.update_card(trello_card_id, assignment_name, due_date, labels, self.canvas_manager.time_format)
-					print('Task Updated: {}, {}'.format(course_name, assignment_name))
+					card = self.trello_manager.update_card(trello_card_id, assignment_name, due_date, labels, self.canvas_manager.time_format, assignment_link)
+					print('Δ updated: {}, {}'.format(course_name, assignment_name))
 				elif sync_needed:
-					card = self.trello_manager.add_card(assignment_name, due_date, labels)
-					print('Task added: {}, {}'.format(course_name, assignment_name))
+					card = self.trello_manager.add_card(assignment_name, due_date, labels, assignment_link)
+					print('+ added: {}, {}'.format(course_name, assignment_name))
 
 				update_data = (card.id, assignment_id)
 				cursor.execute(update_query, update_data)
